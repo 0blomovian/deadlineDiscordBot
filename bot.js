@@ -15,7 +15,7 @@ client.on('ready', () => {
 });
 client.on('message', message => {
 	if(message.content.toString().startsWith('!help')|| message.content.toString().startsWith('!commands')){
-		message.reply('Avaible commands are: \n !add (Inserts new deadline to database. Format: DD.MM.YYYY deadline) \n !show (Prints deadlines for next five days.)');
+		message.reply('Avaible commands are: \n !add (Inserts new deadline to database. Format: DD.MM.YYYY deadline) \n !show (Prints all deadlines in database)');
 	}
 });
 
@@ -53,11 +53,7 @@ client.on('message', message => {
 });
 
 client.login(info.token());
-function formatTodayDate(adder) {
-	let pvm = moment();
-	pvm = moment(pvm).add(adder, 'days').format("DD.MM.YYYY")
-	return pvm;	
-}
+
 
 function checkIfDateIsValid(dateString){
 	let dateArray = dateString.split('.');
@@ -95,22 +91,11 @@ function deadlinesInFiveDays() {
 	});
 }
 
-//function deadlinesInFiveDays() {
-//	MongoClient.connect(info.dbUrl(), function(err, db) {
-//		if(err) throw err;
-//		let query = { pvm : { $in: [formatTodayDate(0), formatTodayDate(1), formatTodayDate(2), formatTodayDate(3), formatTodayDate(4)]}}; 
-//		db.collection(collectionName).find(query).toArray(function(err, result) {
-////			if(err) throw err;
-//			let stripResults = 'Tulevat deadlinet: \n ';
-//			let channel = client.channels.get(testikanava); 
-//			for(let i = 0; i < result.length; i++){
-//				stripResults = stripResults + result[i]['pvm']+': '+ result[i]['name']+ '\n';	
-//			}
-//			channel.send(stripResults);
-//			db.close();
-//		});
-//	});
-//}
+function formatTodayDate(adder) {
+	let pvm = moment();
+	pvm = moment(pvm).add(adder, 'days').format("DD.MM.YYYY")
+	return pvm;	
+}
 
 function getAllData(message){
 	MongoClient.connect(info.dbUrl(), function(err, db) {
