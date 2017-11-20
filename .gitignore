@@ -5,5 +5,4 @@ typings/
 .npm
 .tgz
 .env
-token.js
-url.js
+info.js
