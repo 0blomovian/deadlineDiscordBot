@@ -1,5 +1,4 @@
 # deadlineDiscordBot
-Written in Nodejs.
 
 ## Modules:
 - Discord.js
