@@ -9,13 +9,42 @@ const client = new Discord.Client();
 const testikanava = '175457375933693952';
 const nea17spc = '357091902081859595';
 const format = 'DD.MM.YYYY';
+const skene = require('./ruoka.js');
+
 client.on('ready', () => {
 	console.log('Ready to some serious action!');
 	let scheduler = new cron.CronJob('00 30 15 * * *', function(){deadlinesInFiveDays();}, null, true);
+	client.user.setGame('Cisco NetAcad');
 });
+
 client.on('message', message => {
 	if(message.content.toString().startsWith('!help')|| message.content.toString().startsWith('!commands')){
 		message.reply('Avaible commands are: \n !add (Inserts new deadline to database. Format: DD.MM.YYYY deadline) \n !show (Prints all deadlines in database)');
+	}
+});
+
+client.on('message', message => {
+	if(message.content.toString().startsWith('!iiro')) {
+		let channel = client.channels.get(nea17spc); 
+		channel.send('<@124803977014542339> sinua kaivataan todella paljon, en minä vaan '+message.author );
+
+	}
+});
+
+client.on('message', message => {
+	if(message.content.toString().startsWith('!skene')){
+		let channel = client.channels.get(nea17spc);
+		//channel.send(skene.getSkeneList() );
+		skene.getSkeneList((data) => {
+			channel.send(data);	
+		});
+	}	
+});
+
+client.on('message', message => {
+	if(message.content.toString().startsWith('!ty')) {
+		let channel = client.channels.get(nea17spc);
+		channel.send('Kiitokset!\n-Ruokalista: Jesse\n-Valokuitu: Pomarkun kunta\n-Laitteet: Cisco Systems');
 	}
 });
 
@@ -48,12 +77,11 @@ client.on('message', message => {
 
 client.on('message', message => {
 	if(message.content.toString().startsWith('!show')){
-		getAllData(message);	
+		getAllData(message);
 	}
 });
 
 client.login(info.token());
-
 
 function checkIfDateIsValid(dateString){
 	let dateArray = dateString.split('.');
@@ -72,9 +100,33 @@ function deadlinesInFiveDays() {
 			if(err) throw err;
 			for(let i=0; i < result.length; i++){
 				result[i]['pvm'] = moment(result[i]['pvm'], format);
+				result[i]['pvm'].hours(22);
 			}
+			result = result.filter(function (item) {
+				return item['pvm'] >= moment()
+			});
 			result.sort(sortDate);
-			let printableArray = 'Next five deadlines:\n';
+			let printableArray = '';
+			switch(result.length){
+				case 0:
+					printableArray = '!iiro feed me!!!\n';
+					break;
+				case 1:
+					printableArray = 'Next deadline:\n';
+					break;
+				case 2:
+					printableArray = 'Next two deadlines:\n';
+					break;
+				case 3:
+					printableArray = 'Next three deadlines:\n';
+					break;
+				case 4:
+					printableArray = 'Next four deadlines:\n';
+					break;
+				default:
+					printableArray = 'Next five deadlines:\n';
+					break;
+			}
 			let counter = 0;
 			if(result.length < 5){
 				counter = result.length;	
@@ -106,6 +158,9 @@ function getAllData(message){
 			for(let i=0; i < result.length; i++){
 				result[i]['pvm'] = moment(result[i]['pvm'], format);
 			}
+			result = result.filter(function (item) {
+				return item['pvm'] > moment()
+			});
 			result.sort(sortDate);
 			let printableArray = 'All deadlines:\n';
 			for(let i=0; i < result.length; i++){
