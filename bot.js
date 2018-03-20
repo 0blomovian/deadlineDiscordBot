@@ -12,7 +12,7 @@ const format = 'DD.MM.YYYY';
 const skene = require('./ruoka.js');
 
 client.on('ready', () => {
-	console.log('Ready to some serious action!');
+	console.log('Ready for some serious action!');
 	let scheduler = new cron.CronJob('00 30 15 * * *', function(){deadlinesInFiveDays();}, null, true);
 	client.user.setGame('Cisco NetAcad');
 });
@@ -107,6 +107,7 @@ function deadlinesInFiveDays() {
 			});
 			result.sort(sortDate);
 			let printableArray = '';
+			
 			switch(result.length){
 				case 0:
 					printableArray = '!iiro feed me!!!\n';
@@ -115,16 +116,10 @@ function deadlinesInFiveDays() {
 					printableArray = 'Next deadline:\n';
 					break;
 				case 2:
-					printableArray = 'Next two deadlines:\n';
-					break;
-				case 3:
-					printableArray = 'Next three deadlines:\n';
-					break;
-				case 4:
-					printableArray = 'Next four deadlines:\n';
+					printableArray = 'Next ' + result.length + ' deadlines:\n';
 					break;
 				default:
-					printableArray = 'Next five deadlines:\n';
+					printableArray = 'Next 5 deadlines:\n';
 					break;
 			}
 			let counter = 0;
